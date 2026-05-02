@@ -49,7 +49,7 @@ export default class Game {
     this.restartBtn.addEventListener('click', () => {
       location.reload();
     });
-    this.cameraOffset = new THREE.Vector3(0, 1, 2);
+    this.cameraOffset = new THREE.Vector3(0, 1, 1.5);
     this.difficulty = new DifficultySystem();
     console.log(this.scoreEl, this.gameOverScreen, this.finalScoreEl);
     this.coinEl = document.getElementById('coins');
@@ -93,7 +93,7 @@ export default class Game {
         this.player.mesh.position.z
       ).add(this.cameraOffset);
 
-      this.camera.position.lerp(targetPosition, 0.1);
+      this.camera.position.lerp(targetPosition, 0.3);
       this.camera.lookAt(this.player.mesh.position);
       this.scoreSystem.update();
       this.scoreEl.innerText = this.scoreSystem.score;
