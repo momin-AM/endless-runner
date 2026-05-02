@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Endless Runner</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f2027, #203a43, #000000);
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 420px;
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 0 40px rgba(0,0,0,0.6);
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 32px;
+      margin-bottom: 20px;
+      letter-spacing: 1px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      margin: 10px 0;
+      cursor: pointer;
+      transition: 0.2s;
+      font-weight: bold;
+    }
+
+    .btn:hover {
+      transform: scale(1.03);
+      opacity: 0.9;
+    }
+
+    #playBtn {
+      background: #00ff88;
+      color: black;
+    }
+
+    #authBtn {
+      background: white;
+      color: black;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 15px;
+      margin-top: 15px;
+      text-align: left;
+    }
+
+    .card h2 {
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+
+    .card p {
+      margin: 5px 0;
+      font-size: 14px;
+    }
+
+    .note {
+      margin-top: 15px;
+      font-size: 12px;
+      opacity: 0.6;
+      text-align: center;
+    }
+
+    /* 📱 Mobile tweaks */
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 26px;
+      }
+
+      .btn {
+        font-size: 14px;
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>🏃 Endless Runner</h1>
+
+    <button id="authBtn" class="btn">Loading...</button>
+    <button id="playBtn" class="btn">▶ Play Game</button>
+
+    <div id="leaderboard" class="card"></div>
+
+    <div id="stats" class="card">
+      <h2>📊 Your Stats</h2>
+      <p>🏆 Best Score: 0</p>
+      <p>🪙 Best Coins: 0</p>
+      <p>👤 User: Guest</p>
+    </div>
+
+    <p class="note">⚠️ If sign-in gets stuck, refresh the page</p>
+  </div>
+
+  <script type="module">
+console.log("HOME SCRIPT LOADED");
+
+import { loginWithGoogle, auth } from "/src/firebase.js";
+import { signOut } from "firebase/auth";
+import { getLeaderboard, getUserStats } from "/src/userService.js";
+import { initAuth, subscribeAuth } from "/src/authState.js";
+
+const statsEl = document.getElementById("stats");
+const authBtn = document.getElementById("authBtn");
+
+// 🔥 VERY IMPORTANT → INIT AUTH SYSTEM
+initAuth();
+
+// 🎮 PLAY BUTTON
+document.getElementById("playBtn").onclick = () => {
+  window.location.href = "/game.html";
+};
+
+// 🔐 AUTH STATE HANDLER (MAIN LOGIC)
+subscribeAuth(async (user) => {
+
+  // 🔴 NOT LOGGED IN
+  if (!user) {
+    statsEl.innerHTML = `
+      <p>🏆 Best Score: 0</p>
+      <p>🪙 Best Coins: 0</p>
+      <p>👤 User: Guest</p>
+    `;
+
+    authBtn.innerText = "Sign In with Google";
+
+    authBtn.onclick = async () => {
+      authBtn.innerText = "Signing in...";
+
+      const user = await loginWithGoogle();
+
+      if (!user) {
+        authBtn.innerText = "Sign In with Google";
+      }
+    };
+
+    return;
+  }
+
+  // 🟢 LOGGED IN
+  const data = await getUserStats();
+
+  statsEl.innerHTML = `
+    <p>🏆 Best Score: ${data?.bestScore || 0}</p>
+    <p>🪙 Best Coins: ${data?.bestCoins || 0}</p>
+    <p>👤 User: ${user.displayName}</p>
+  `;
+
+  authBtn.innerText = "Sign Out";
+
+  authBtn.onclick = async () => {
+    await signOut(auth);
+  };
+});
+
+// 🏆 LEADERBOARD
+async function loadLeaderboard() {
+  const data = await getLeaderboard();
+
+  const el = document.getElementById("leaderboard");
+  el.innerHTML = "<h2>🏆 Leaderboard</h2>";
+
+  data.slice(0, 5).forEach((u, i) => {
+    el.innerHTML += `<p>${i + 1}. ${u.name} - ${u.bestScore}</p>`;
+  });
+}
+
+loadLeaderboard();
+</script>
+
+</body>
+
+</html>
