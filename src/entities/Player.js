@@ -14,8 +14,8 @@ export default class Player {
 
     // Physics
     this.velocityY = 0;
-    this.gravity = -0.014;
-    this.jumpForce = 0.3;
+    this.gravity = -0.015;
+    this.jumpForce = 0.28;
     this.isGrounded = true;
 
     // Slide
@@ -52,6 +52,7 @@ export default class Player {
         jump: this.findAnim("jump"),
         slide: this.findAnim("slide"),
       };
+      this.jumpForward = 0;
 
       // ▶️ Default animation
       this.playAnimation(this.animMap.run || Object.keys(this.actions)[0]);
@@ -105,7 +106,7 @@ export default class Player {
 
  jump() {
   if (!this.isGrounded) return;
-
+  this.jumpForward = 0.15; // forward boost
   this.velocityY = this.jumpForce;
   this.isGrounded = false;
 }
@@ -145,6 +146,8 @@ export default class Player {
       this.velocityY = 0;
 
       if (!this.isGrounded) {
+        this.mesh.position.z -= this.jumpForward;
+        this.jumpForward *= 0.9; // decay (important!)
         this.isGrounded = true;
         if (this.animMap.run) this.playAnimation(this.animMap.run);
       }
