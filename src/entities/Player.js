@@ -14,8 +14,8 @@ export default class Player {
 
     // Physics
     this.velocityY = 0;
-    this.gravity = -0.023;
-    this.jumpForce = 0.32;
+    this.gravity = -0.014;
+    this.jumpForce = 0.3;
     this.isGrounded = true;
 
     // Slide
@@ -122,13 +122,14 @@ export default class Player {
     }
   }
 
-  update() {
+  update(delta=0.016) {
     // 🎬 Animation update
-    if (this.mixer) this.mixer.update(0.016);
-
+    
+    if (this.mixer) this.mixer.update(delta*0.6);
+    
     // Lane movement
     const targetX = this.lanes[this.currentLane];
-    this.mesh.position.x += (targetX - this.mesh.position.x) * 0.2;
+    this.mesh.position.x += (targetX - this.mesh.position.x) * 0.15;
 
     // Tilt
     this.mesh.rotation.z =
@@ -136,7 +137,7 @@ export default class Player {
 
     // Gravity
     this.velocityY += this.gravity;
-    this.mesh.position.y += this.velocityY;
+    this.mesh.position.y += this.velocityY*0.9;
 
     // Landing
     if (this.mesh.position.y <= 0.5) {

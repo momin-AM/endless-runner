@@ -55,7 +55,7 @@ spawnCoin() {
     0.3,
     -100 - Math.random() * 30
   );
-  coin.scale.set(1.5, 1.5, 1.5);
+  coin.scale.set(1.2, 1.2, 1.2);
   coin.rotation.y = Math.PI / 2;
   coin.userData.type = "coin";
 
@@ -124,7 +124,11 @@ else if (modelType === "crate") {
   update(speed, spawnRate) {
     this.coinTimer++;
 
-if (this.coinTimer > 30) { // balanced frequency
+const maxCoins = 15;
+
+const coinCount = this.obstacles.filter(o => o.isCoin).length;
+
+if (coinCount < maxCoins && this.coinTimer > 30) {
   this.spawnCoin();
   this.coinTimer = 0;
 }
@@ -138,7 +142,7 @@ if (this.coinTimer > 30) { // balanced frequency
 
   // 🪙 coin spin animation
   if (o.isCoin) {
-    o.mesh.rotation.y += 0.08;
+    o.mesh.rotation.y += 0.03;
     
   }
 });

@@ -49,7 +49,7 @@ export default class Game {
     this.restartBtn.addEventListener('click', () => {
       location.reload();
     });
-    this.cameraOffset = new THREE.Vector3(0, 1.2, 1);
+    this.cameraOffset = new THREE.Vector3(0, 1.2, 1.2);
     this.difficulty = new DifficultySystem();
     console.log(this.scoreEl, this.gameOverScreen, this.finalScoreEl);
     this.coinEl = document.getElementById('coins');
@@ -76,6 +76,10 @@ export default class Game {
   animate() {
     this.environment.update(this.speed);
     requestAnimationFrame(() => this.animate());
+    const now = performance.now();
+    const delta = (now - this.lastTime) / 1000;
+    this.lastTime = now;
+    this.player.update(delta);
     if (!this.gameOver) {
       this.difficulty.update();
       this.coinEl.innerText = this.player.coins ?? 0;
@@ -88,21 +92,21 @@ export default class Game {
 
       // Camera follow (keep your existing code)
       // 🎥 MOBILE OPTIMIZED CAMERA
-const targetX = this.player.mesh.position.x;
-const targetY = this.player.mesh.position.y + 1; 
-const targetZ = this.player.mesh.position.z;
+      const targetX = this.player.mesh.position.x;
+      const targetY = this.player.mesh.position.y + 1;
+      const targetZ = this.player.mesh.position.z;
 
-// smooth follow (less floaty)
-this.camera.position.x += (targetX - this.camera.position.x) * 0.2;
-this.camera.position.y += (targetY - this.camera.position.y) * 0.1;
-this.camera.position.z += (targetZ + this.cameraOffset.z - this.camera.position.z) * 0.1;
+      // smooth follow (less floaty)
+      this.camera.position.x += (targetX - this.camera.position.x) * 0.2;
+      this.camera.position.y += (targetY - this.camera.position.y) * 0.1;
+      this.camera.position.z += (targetZ + this.cameraOffset.z - this.camera.position.z) * 0.1;
 
-// look slightly forward
-this.camera.lookAt(
-  targetX,
-  targetY,
-  targetZ - 2
-);
+      // look slightly forward
+      this.camera.lookAt(
+        targetX,
+        targetY,
+        targetZ - 2
+      );
       this.scoreSystem.update();
       this.scoreEl.innerText = this.scoreSystem.score;
 
