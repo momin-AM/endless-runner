@@ -6,116 +6,128 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Endless Runner</title>
   <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      font-family: Arial, sans-serif;
-      touch-action: none;
-    }
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+  }
 
-    #ui {
-      position: fixed;
-      /* 👈 IMPORTANT (was absolute) */
-      top: 0;
-      left: 0;
-      width: 100vw;
-      /* 👈 force full width */
-      height: 100vh;
-      /* 👈 force full height */
-      z-index: 10;
-      pointer-events: auto;
-    }
+  body {
+    overflow: hidden;
+    background: black;
+    touch-action: none;
+  }
 
-    /* Top score bar */
-    #topBar {
-      position: absolute;
-      top: 20px;
-      width: 100%;
-      text-align: center;
-    }
+  canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+  }
 
+  #ui {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  /* 🔝 TOP BAR */
+  #topBar {
+    position: absolute;
+    top: 12px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 16px;
+  }
+
+  #score, #coins {
+    background: rgba(26, 23, 23, 0.5);
+    padding: 8px 14px;
+    border-radius: 12px;
+    font-weight: bold;
+    text-shadow: 0 0 10px black;
+  }
+
+  #score {
+    font-size: 22px;
+    color: white;
+  }
+
+  #coins {
+    font-size: 20px;
+    color: #ffd700;
+  }
+
+  /* 🎮 GAME OVER */
+  #gameOverScreen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    display: none;
+    flex-direction: column;
+    align-items: center;
+
+    background: rgba(0,0,0,0.85);
+    padding: 25px;
+    border-radius: 16px;
+
+    pointer-events: auto;
+  }
+
+  #gameOverScreen h1 {
+    color: #ff4d4d;
+    font-size: 28px;
+    margin-bottom: 10px;
+  }
+
+  #gameOverScreen p {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+  #finalScore{
+    color: #00ff88;
+  }
+  button {
+    padding: 12px 20px;
+    margin: 6px;
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  #restartBtn {
+    background: #00ff88;
+    color: black;
+  }
+
+  #homeBtn {
+    background: white;
+    color: black;
+  }
+
+  /* 📱 EXTRA MOBILE */
+  @media (max-width: 480px) {
     #score {
-      font-size: 32px;
-      color: white;
-      font-weight: bold;
-      text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
-    }
-
-    /* Game Over Screen */
-    #gameOverScreen {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-
-      display: none;
-      text-align: center;
-
-      background: rgba(0, 0, 0, 0.8);
-      /* 👈 makes it visible */
-      padding: 20px;
-      border-radius: 10px;
-
-      pointer-events: auto;
-    }
-
-    #gameOverScreen h1 {
-      color: red;
-      font-size: 48px;
-      margin-bottom: 10px;
-    }
-
-    #gameOverScreen p {
-      color: white;
-      font-size: 24px;
-    }
-
-    #restartBtn {
-      margin-top: 15px;
-      padding: 10px 20px;
       font-size: 18px;
-      border: none;
-      background: white;
-      cursor: pointer;
-      border-radius: 8px;
-    }
-
-    canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 1;
     }
 
     #coins {
-      font-size: 24px;
-      color: yellow;
-      margin-top: 5px;
-      text-shadow: 0 0 10px black;
-    }
-
-    #homeBtn {
-      margin-top: 12px;
-      padding: 10px 18px;
       font-size: 16px;
-      font-weight: bold;
-      color: white;
-      background: linear-gradient(135deg, #4caf50, #2e7d32);
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s ease;
     }
 
-    #homeBtn:hover {
-      transform: scale(1.05);
-      background: linear-gradient(135deg, #66bb6a, #388e3c);
+    #gameOverScreen h1 {
+      font-size: 24px;
     }
-
-    #homeBtn:active {
-      transform: scale(0.95);
-    }
-  </style>
+  }
+</style>
 </head>
 
 <body>

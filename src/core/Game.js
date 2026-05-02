@@ -49,7 +49,7 @@ export default class Game {
     this.restartBtn.addEventListener('click', () => {
       location.reload();
     });
-    this.cameraOffset = new THREE.Vector3(0, 1, 1.5);
+    this.cameraOffset = new THREE.Vector3(0, 1.2, 1);
     this.difficulty = new DifficultySystem();
     console.log(this.scoreEl, this.gameOverScreen, this.finalScoreEl);
     this.coinEl = document.getElementById('coins');
@@ -70,7 +70,7 @@ export default class Game {
     this.player = new Player(this.scene);
     this.input = new InputHandler(this.player);
     this.track = new Track(this.scene);
-    this.speed = 0.2;
+    this.speed = 0.15;
   }
 
   animate() {
@@ -87,14 +87,22 @@ export default class Game {
       this.spawnSystem.update(this.speed, spawnRate);
 
       // Camera follow (keep your existing code)
-      const targetPosition = new THREE.Vector3(
-        this.player.mesh.position.x,
-        this.player.mesh.position.y,
-        this.player.mesh.position.z
-      ).add(this.cameraOffset);
+      // 🎥 MOBILE OPTIMIZED CAMERA
+const targetX = this.player.mesh.position.x;
+const targetY = this.player.mesh.position.y + 1; 
+const targetZ = this.player.mesh.position.z;
 
-      this.camera.position.lerp(targetPosition, 0.3);
-      this.camera.lookAt(this.player.mesh.position);
+// smooth follow (less floaty)
+this.camera.position.x += (targetX - this.camera.position.x) * 0.2;
+this.camera.position.y += (targetY - this.camera.position.y) * 0.1;
+this.camera.position.z += (targetZ + this.cameraOffset.z - this.camera.position.z) * 0.1;
+
+// look slightly forward
+this.camera.lookAt(
+  targetX,
+  targetY,
+  targetZ - 2
+);
       this.scoreSystem.update();
       this.scoreEl.innerText = this.scoreSystem.score;
 

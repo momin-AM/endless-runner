@@ -14,8 +14,8 @@ export default class Player {
 
     // Physics
     this.velocityY = 0;
-    this.gravity = -0.02;
-    this.jumpForce = 0.35;
+    this.gravity = -0.023;
+    this.jumpForce = 0.32;
     this.isGrounded = true;
 
     // Slide
@@ -32,7 +32,7 @@ export default class Player {
       // ✅ Fix direction
       this.model.rotation.y = Math.PI;
 
-      this.model.scale.set(0.5, 0.5, 0.5);
+      this.model.scale.set(0.3, 0.3, 0.3);
       this.mesh.add(this.model);
 
       // 🎬 Animation setup
@@ -57,7 +57,7 @@ export default class Player {
       this.playAnimation(this.animMap.run || Object.keys(this.actions)[0]);
     });
 
-    this.mesh.position.set(0, 0.4, 0);
+    this.mesh.position.set(0, 0.5, 0);
     scene.add(this.mesh);
   }
 
@@ -103,23 +103,18 @@ export default class Player {
     }
   }
 
-  jump() {
-    if (this.isGrounded && !this.isSliding) {
-      this.velocityY = this.jumpForce;
-      this.isGrounded = false;
+ jump() {
+  if (!this.isGrounded) return;
 
-      if (this.animMap.jump) {
-        this.playAnimation(this.animMap.jump);
-      }
-    }
-  }
-
+  this.velocityY = this.jumpForce;
+  this.isGrounded = false;
+}
   slide() {
     if (!this.isSliding && this.isGrounded) {
       this.isSliding = true;
       this.slideTimer = 30;
 
-      this.mesh.scale.y = 0.5;
+      this.mesh.scale.y = 0.3;
 
       if (this.animMap.slide) {
         this.playAnimation(this.animMap.slide);
